@@ -8,3 +8,7 @@ class Dev:
     SQLALCHEMY_TRACK_MODIFICATIONS = True  # 可扩展 兼容性问题
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True  # 回收资源时自动关闭
     SQLALCHEMY_ECHO = True  # 显示SQL
+
+
+def USER_DIR():
+    return None

@@ -2,9 +2,71 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>主页</title>
+    <style>
+        .circle-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            box-shadow: 5px 5px 5px lightgray;
+        }
+    </style>
 </head>
 <body>
-<h1>主页</h1>
+<h1>欢迎来到主页</h1>
+<p>
+    <img class="circle-img"
+         id="photoImg"
+         title="点击图片更改"
+         onclick="selectImg()"
+         src="/static/{% if user.photo %}{{ user.photo }}{% else %}images/lbjn.jpg{% endif %} "/>
+</p>
+<input type="file"
+       id="selectFile"
+       style="display: none"
+       onchange="upload(this.files[0])">
+<script>
+    function $(domID) {
+        return document.getElementById(domID)
+    }
+    function selectImg() {
+        if(confirm('是否确定更改头像')){
+            alert('准备选择头像')
+            $('selectFile').click()
+        }
+    }
+    function upload(file) {
+        {#alert(file.name)#}
+        {#console.log(file)#}
+        if(file.type.startsWith('image/')){
+            if(file.size <= 1024*1024*8){
+                let url = "{{ url_for('userBlue.upload_photo') }}";
+                let request = new XMLHttpRequest();
+                request.open('post', url, true);
+                request.onload = function (ev) {
+                    let respText;
+                    let respJson;
+                    if (request.status == 200 && request.readyState == 4) {
+                        respText = request.responseText;
+                        respJson = JSON.parse(respText)
+
+                        console.log(respText, respJson)
+                        $('photoImg').src = '/static/'+ respJson.path;
+                    }
+                };
+
+                let formdata = new FormData();
+                formdata.append('photo', file)
+
+                // 发送请求
+                request.send(formdata)
+            }else {
+                alert('上传的图片大小在2m以内')
+            }
+        }else {
+            alert('只限图片上传')
+        }
+    }
+</script>
 </body>
 </html>
